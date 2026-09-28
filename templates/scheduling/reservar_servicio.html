@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %}Agendar cita — Dental San Antonio{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container" style="max-width:640px;">
+        {% include "scheduling/_wizard_steps.html" %}
+        <div class="wizard-card">
+            <h2 class="section-title">{{ categoria.nombre }}</h2>
+            <p class="section-subtitle">¿Cuál de estos servicios necesitas?</p>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.servicio.errors }}
+                <div class="radio-list">
+                    {% for servicio in servicios %}
+                        <label class="radio-option">
+                            <input type="radio" name="servicio" value="{{ servicio.pk }}" required>
+                            <span>
+                                {{ servicio.nombre }}
+                                <br><strong>${{ servicio.precio_general|floatformat:0|intcomma }}</strong>
+                            </span>
+                        </label>
+                    {% endfor %}
+                </div>
+                <div class="form-actions">
+                    <a href="{% url 'scheduling:reservar_categoria' %}" class="btn btn--ghost">Atrás</a>
+                    <button type="submit" class="btn btn--primary">Continuar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

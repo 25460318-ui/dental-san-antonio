@@ -1,0 +1,83 @@
+{% extends "scheduling/panel_base.html" %}
+{% block title %}Nueva cita presencial — Panel{% endblock %}
+{% block panel_content %}
+
+<h2 class="section-title" style="text-align:left;">Registrar cita presencial</h2>
+<p class="section-subtitle" style="text-align:left; margin-bottom:24px;">
+    Usa esto cuando un paciente agenda en el consultorio (en persona o por teléfono).
+    El horario que elijas queda bloqueado de inmediato para reservas en línea.
+</p>
+
+{% if solicitud %}
+<div class="alert alert--error">
+    Agendando a partir de la solicitud de emergencia de <strong>{{ solicitud.nombre }}</strong>
+    ({{ solicitud.telefono }}) — dolor reportado {{ solicitud.nivel_dolor }}/10: "{{ solicitud.motivo }}"
+</div>
+{% endif %}
+
+<div class="wizard-card" style="margin-bottom:24px; padding:20px;">
+    <form method="get" style="display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end;">
+        {% if solicitud %}<input type="hidden" name="solicitud" value="{{ solicitud.pk }}">{% endif %}
+        <div class="form-group" style="margin-bottom:0; min-width:240px;">
+            {{ buscar_form.servicio.label_tag }}
+            {{ buscar_form.servicio }}
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+            {{ buscar_form.fecha.label_tag }}
+            {{ buscar_form.fecha }}
+        </div>
+        <button type="submit" class="btn btn--ghost">Ver horarios</button>
+    </form>
+</div>
+
+{% if servicio and fecha %}
+    {% if slots %}
+    <div class="wizard-card">
+        <h3>Horarios disponibles — {{ servicio.nombre }}, {{ fecha|date:"d/m/Y" }}</h3>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="servicio_id" value="{{ servicio.pk }}">
+            <input type="hidden" name="fecha_valor" value="{{ fecha|date:'Y-m-d' }}">
+            {% if solicitud %}<input type="hidden" name="solicitud_id" value="{{ solicitud.pk }}">{% endif %}
+
+            <div class="slots-grid" style="margin-bottom:24px;">
+                {% for inicio, fin in slots %}
+                    <label class="slot-option">
+                        <input type="radio" name="horario" value="{{ inicio.isoformat }}|{{ fin.isoformat }}" required>
+                        {{ inicio|time:"H:i" }} - {{ fin|time:"H:i" }}
+                    </label>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                {{ registro_form.nombre.label_tag }}{{ registro_form.nombre }}{{ registro_form.nombre.errors }}
+            </div>
+            <div class="form-group">
+                {{ registro_form.telefono.label_tag }}{{ registro_form.telefono }}{{ registro_form.telefono.errors }}
+            </div>
+            <div class="form-group">
+                {{ registro_form.email.label_tag }}{{ registro_form.email }}
+            </div>
+            <div class="form-group">
+                {{ registro_form.convenio.label_tag }}{{ registro_form.convenio }}
+            </div>
+            <div class="form-group">
+                {{ registro_form.identificador_convenio.label_tag }}{{ registro_form.identificador_convenio }}
+            </div>
+            <div class="form-group">
+                {{ registro_form.nivel_dolor.label_tag }}{{ registro_form.nivel_dolor }}
+            </div>
+            <div class="form-group">
+                {{ registro_form.tipo.label_tag }}{{ registro_form.tipo }}
+            </div>
+
+            <div class="form-actions" style="justify-content:flex-end;">
+                <button type="submit" class="btn btn--primary">Registrar cita</button>
+            </div>
+        </form>
+    </div>
+    {% else %}
+        <div class="empty-state">No hay horarios disponibles ese día para este servicio.</div>
+    {% endif %}
+{% endif %}
+{% endblock %}

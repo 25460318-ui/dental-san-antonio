@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Solicitud enviada — Dental San Antonio{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container" style="max-width:560px; text-align:center;">
+        <div class="icon-badge" style="margin:0 auto 16px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+        </div>
+        <h2 class="section-title">Recibimos tu solicitud</h2>
+        <p class="section-subtitle">
+            Nos pondremos en contacto contigo lo antes posible. Si tu dolor empeora o no podemos
+            comunicarnos a tiempo, llámanos directamente.
+        </p>
+        <a href="tel:{{ clinic_info.telefono_1 }}" class="btn btn--danger">Llamar: {{ clinic_info.telefono_1 }}</a>
+        <p style="margin-top:20px;"><a href="{% url 'core:home' %}">Volver al inicio</a></p>
+    </div>
+</section>
+{% endblock %}

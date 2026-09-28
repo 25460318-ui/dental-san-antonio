@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% load static humanize %}
+
+{% block content %}
+
+<section class="hero" id="agendar">
+    <div class="container reveal">
+        <span class="hero__placeholder-tag">Mensaje temporal — pendiente de definir eslogan final</span>
+        <img src="{% static 'images/logo.png' %}" alt="Dental San Antonio">
+        <h1>Dental San Antonio</h1>
+        <p>{{ clinic_info.mensaje_hero }}</p>
+        <div class="hero__actions">
+            <a href="{% url 'scheduling:reservar_categoria' %}" class="btn btn--outline">Agendar cita</a>
+            <a href="#servicios" class="btn btn--outline">Ver servicios</a>
+            <a href="#emergencia" class="btn btn--danger">Emergencia</a>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="convenios">
+    <div class="container">
+        <h2 class="section-title reveal">Convenios</h2>
+        <p class="section-subtitle reveal">Trabajamos con las siguientes instituciones para ofrecerte precios preferenciales.</p>
+
+        {% if convenios %}
+            <div class="convenios reveal">
+                {% for convenio in convenios %}
+                    <div class="convenio-card">
+                        {% if convenio.logo %}
+                            <img src="{{ convenio.logo.url }}" alt="{{ convenio.nombre }}">
+                        {% else %}
+                            <div class="convenio-card__badge">{{ convenio.nombre|slice:":2"|upper }}</div>
+                        {% endif %}
+                        <div>
+                            <strong>{{ convenio.nombre }}</strong>
+                            {% if convenio.descripcion %}<div>{{ convenio.descripcion }}</div>{% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">Muy pronto verás aquí los convenios disponibles.</div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="section section--alt" id="servicios">
+    <div class="container">
+        <h2 class="section-title reveal">Nuestros servicios</h2>
+        <p class="section-subtitle reveal">
+            Elige una categoría para conocer sus servicios y precios, y agenda tu cita al momento.
+        </p>
+
+        {% if categorias %}
+            <div class="servicios-tiles reveal">
+                {% for categoria in categorias %}
+                    <a class="servicio-tile" href="{% url 'scheduling:reservar_categoria' %}?categoria={{ categoria.pk }}">
+                        <div class="icon-badge">
+                            {% if categoria.nombre == "Servicios generales" %}
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 17.01"></polyline></svg>
+                            {% elif categoria.nombre == "Urgencias" %}
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                            {% elif categoria.nombre == "Odontopediatría" %}
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                            {% elif categoria.nombre == "Restauraciones y estética" %}
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.5 6.5L21 11l-6.5 2.5L12 20l-2.5-6.5L3 11l6.5-2.5z"></path></svg>
+                            {% elif categoria.nombre == "Prótesis" %}
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>
+                            {% elif categoria.nombre == "Especialidades" %}
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"></path></svg>
+                            {% elif categoria.nombre == "Aparatología" %}
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                            {% else %}
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 17.01"></polyline></svg>
+                            {% endif %}
+                        </div>
+                        <strong>{{ categoria.nombre }}</strong>
+                        {% if categoria.descripcion_corta %}<p>{{ categoria.descripcion_corta }}</p>{% endif %}
+                    </a>
+                {% endfor %}
+            </div>
+            <p class="section-subtitle" style="margin-top:28px;">
+                ¿Ya sabes qué necesitas?
+                <a href="{% url 'scheduling:reservar_categoria' %}">Agenda tu cita directamente</a>.
+            </p>
+        {% else %}
+            <div class="empty-state">Muy pronto verás aquí nuestro catálogo de servicios.</div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <h2 class="section-title reveal">¿Cómo agendar tu cita?</h2>
+        <div class="pasos reveal">
+            <div class="paso">
+                <div class="paso__numero">1</div>
+                <p>Elige el servicio que necesitas.</p>
+            </div>
+            <div class="paso">
+                <div class="paso__numero">2</div>
+                <p>Selecciona la fecha y el horario disponible.</p>
+            </div>
+            <div class="paso">
+                <div class="paso__numero">3</div>
+                <p>Confirma tus datos y el anticipo requerido.</p>
+            </div>
+        </div>
+        <p class="section-subtitle reveal" style="margin-top:32px; margin-bottom:8px;">
+            Para confirmar tu cita se requiere un anticipo del {{ clinic_info.anticipo_porcentaje|floatformat:0 }}%.
+        </p>
+        <div style="text-align:center;">
+            <a href="{% url 'scheduling:reservar_categoria' %}" class="btn btn--primary">Comenzar a agendar</a>
+        </div>
+    </div>
+</section>
+
+<section class="section section--alt" id="ubicacion">
+    <div class="container">
+        <h2 class="section-title reveal">Información del consultorio</h2>
+        <div class="info-grid reveal">
+            <div class="info-card">
+                <div class="icon-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                </div>
+                <h4>Dirección</h4>
+                <p>{{ clinic_info.direccion }}</p>
+            </div>
+            <div class="info-card">
+                <div class="icon-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92Z"></path></svg>
+                </div>
+                <h4>Teléfonos</h4>
+                <p><a href="tel:{{ clinic_info.telefono_1 }}">{{ clinic_info.telefono_1 }}</a></p>
+                {% if clinic_info.telefono_2 %}<p><a href="tel:{{ clinic_info.telefono_2 }}">{{ clinic_info.telefono_2 }}</a></p>{% endif %}
+            </div>
+            <div class="info-card" id="contacto">
+                <div class="icon-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 6c0-1.1-.9-2-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h16a2 2 0 0 0 2-2V6Z"></path><path d="m2 7 10 6 10-6"></path></svg>
+                </div>
+                <h4>Correo</h4>
+                <p><a href="mailto:{{ clinic_info.email }}">{{ clinic_info.email }}</a></p>
+            </div>
+        </div>
+
+        <div class="mapa reveal" style="margin-top:32px;">
+            <iframe
+                src="https://www.google.com/maps?q={{ clinic_info.direccion|urlencode }}&output=embed"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+        </div>
+    </div>
+</section>
+
+<section class="section emergencia" id="emergencia">
+    <div class="container reveal">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 12px;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        <h2>¿Tienes una emergencia dental?</h2>
+        <p>Llámanos directamente, o cuéntanos qué pasa y te contactaremos lo antes posible.</p>
+        <div class="hero__actions" style="justify-content:center;">
+            <a href="tel:{{ clinic_info.telefono_1 }}" class="btn btn--outline">Llamar ahora: {{ clinic_info.telefono_1 }}</a>
+            <a href="{% url 'scheduling:emergencia_formulario' %}" class="btn btn--danger">Enviar solicitud</a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Elige tu fecha — Dental San Antonio{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container" style="max-width:640px;">
+        {% include "scheduling/_wizard_steps.html" %}
+        <div class="wizard-card">
+            <h2 class="section-title">¿Qué día te gustaría venir?</h2>
+            <p class="section-subtitle">Servicio seleccionado: <strong>{{ servicio.nombre }}</strong></p>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form.fecha.label_tag }}
+                    {{ form.fecha }}
+                    {{ form.fecha.errors }}
+                </div>
+                <div class="form-actions">
+                    <a href="{% url 'scheduling:reservar_servicio' %}" class="btn btn--ghost">Atrás</a>
+                    <button type="submit" class="btn btn--primary">Continuar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

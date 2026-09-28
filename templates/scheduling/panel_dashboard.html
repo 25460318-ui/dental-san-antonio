@@ -1,0 +1,80 @@
+{% extends "scheduling/panel_base.html" %}
+{% load humanize %}
+{% block title %}Inicio — Panel{% endblock %}
+{% block panel_content %}
+
+<h2 class="section-title" style="text-align:left;">Hola, {{ request.user.get_full_name|default:request.user.username }}</h2>
+<p class="section-subtitle" style="text-align:left; margin-bottom:24px;">{{ hoy|date:"l d \d\e F, Y" }}</p>
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="stat-card__label">Citas de hoy</div>
+        <div class="stat-card__value">{{ citas_hoy|length }}</div>
+        <div class="stat-card__sub">{{ confirmadas_hoy }} confirmadas · {{ pendientes_hoy }} por confirmar</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card__label">Anticipos cobrados este mes</div>
+        <div class="stat-card__value">${{ anticipos_mes|floatformat:0|intcomma }}</div>
+        <div class="stat-card__sub">Suma de anticipos marcados como pagados</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card__label">Bloqueos activos</div>
+        <div class="stat-card__value">{{ bloqueos_activos|length }}</div>
+        <div class="stat-card__sub">Días u horarios restringidos próximos</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card__label">Emergencias sin contactar</div>
+        <div class="stat-card__value">{{ solicitudes_pendientes }}</div>
+        <div class="stat-card__sub">Solicitudes pendientes de revisión</div>
+    </div>
+</div>
+
+<div class="quick-actions">
+    <a href="{% url 'scheduling:panel_agenda' %}" class="btn btn--ghost panel-btn-sm">Ver agenda de hoy</a>
+    <a href="{% url 'scheduling:panel_cita_nueva' %}" class="btn btn--ghost panel-btn-sm">+ Nueva cita presencial</a>
+    <a href="{% url 'scheduling:panel_disponibilidad' %}" class="btn btn--ghost panel-btn-sm">Bloquear un día u horario</a>
+    <a href="{% url 'scheduling:panel_buscar_citas' %}" class="btn btn--ghost panel-btn-sm">Buscar paciente</a>
+</div>
+
+<div style="display:grid; grid-template-columns: 1.4fr 1fr; gap:24px; align-items:start;">
+    <div class="wizard-card" style="padding:20px;">
+        <h3 style="margin-top:0;">Citas de hoy</h3>
+        {% if citas_hoy %}
+            <table class="panel-table">
+                <thead><tr><th>Hora</th><th>Paciente</th><th>Servicio</th><th>Estado</th></tr></thead>
+                <tbody>
+                    {% for cita in citas_hoy %}
+                    <tr class="{% if cita.tipo == 'emergencia' %}panel-row--emergencia{% endif %}">
+                        <td>{{ cita.hora_inicio|time:"H:i" }}</td>
+                        <td>{{ cita.paciente.nombre }}</td>
+                        <td>{{ cita.servicio.nombre }}</td>
+                        <td><span class="badge badge--cita-{{ cita.estado_cita }}">{{ cita.get_estado_cita_display }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty-state">No hay citas registradas para hoy.</div>
+        {% endif %}
+    </div>
+
+    <div class="wizard-card" style="padding:20px;">
+        <h3 style="margin-top:0;">Próximos bloqueos</h3>
+        {% if bloqueos_activos %}
+            <div class="radio-list">
+                {% for b in bloqueos_activos %}
+                    <div class="radio-option" style="cursor:default;">
+                        <div>
+                            <strong>{{ b.fecha_hora_inicio|date:"d/m/Y H:i" }} — {{ b.fecha_hora_fin|date:"d/m/Y H:i" }}</strong>
+                            <br><small>{{ b.motivo }}</small>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">No hay bloqueos próximos.</div>
+        {% endif %}
+        <p style="margin-top:16px;"><a href="{% url 'scheduling:panel_disponibilidad' %}">Administrar disponibilidad →</a></p>
+    </div>
+</div>
+{% endblock %}

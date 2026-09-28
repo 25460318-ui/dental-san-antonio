@@ -1,0 +1,64 @@
+{% extends "scheduling/panel_base.html" %}
+{% block title %}Emergencias — Panel{% endblock %}
+{% block panel_content %}
+
+<h2 class="section-title" style="text-align:left;">Solicitudes de emergencia</h2>
+
+<div class="wizard-card" style="margin-bottom:24px; padding:20px;">
+    <form method="get" style="display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end;">
+        <div class="form-group" style="margin-bottom:0;">
+            <label>Estado</label>
+            <select name="estado">
+                <option value="">Todos</option>
+                {% for value, label in estados %}
+                    <option value="{{ value }}" {% if filtros.estado == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn--ghost">Filtrar</button>
+    </form>
+</div>
+
+{% if solicitudes %}
+<div class="wizard-card" style="padding:0; overflow-x:auto;">
+    <table class="panel-table">
+        <thead>
+            <tr>
+                <th>Recibida</th><th>Paciente</th><th>Motivo</th><th>Dolor</th><th>Estado</th><th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for solicitud in solicitudes %}
+            <tr class="{% if solicitud.estado == 'pendiente' %}panel-row--emergencia{% endif %}">
+                <td>{{ solicitud.created_at|date:"d/m/Y H:i" }}</td>
+                <td>{{ solicitud.nombre }}<br><small>{{ solicitud.telefono }}</small></td>
+                <td>{{ solicitud.motivo }}</td>
+                <td><span class="badge {% if solicitud.nivel_dolor >= 8 %}badge--dolor-alto{% endif %}">{{ solicitud.nivel_dolor }}/10</span></td>
+                <td>
+                    <form method="post" action="{% url 'scheduling:panel_solicitud_cambiar_estado' solicitud.pk %}" style="display:flex; gap:6px; align-items:center;">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                        <select name="estado">
+                            {% for value, label in estados %}
+                                <option value="{{ value }}" {% if solicitud.estado == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn--ghost panel-btn-sm">Guardar</button>
+                    </form>
+                </td>
+                <td>
+                    {% if solicitud.cita_generada %}
+                        <small>Cita el {{ solicitud.cita_generada.fecha|date:"d/m/Y" }} {{ solicitud.cita_generada.hora_inicio|time:"H:i" }}</small>
+                    {% else %}
+                        <a href="{% url 'scheduling:panel_cita_nueva' %}?solicitud={{ solicitud.pk }}" class="btn btn--primary panel-btn-sm">Agendar</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">No hay solicitudes de emergencia con este filtro.</div>
+{% endif %}
+{% endblock %}

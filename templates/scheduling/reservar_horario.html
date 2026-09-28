@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Elige tu horario — Dental San Antonio{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container" style="max-width:640px;">
+        {% include "scheduling/_wizard_steps.html" %}
+        <div class="wizard-card">
+            <h2 class="section-title">Horarios disponibles</h2>
+            <p class="section-subtitle">{{ servicio.nombre }} — {{ fecha|date:"l d \d\e F" }}</p>
+
+            {% if hay_slots %}
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.horario.errors }}
+                    <div class="slots-grid">
+                        {% for value, label in form.fields.horario.choices %}
+                            <label class="slot-option">
+                                <input type="radio" name="horario" value="{{ value }}" {% if form.horario.value == value %}checked{% endif %} required>
+                                {{ label }}
+                            </label>
+                        {% endfor %}
+                    </div>
+                    <div class="form-actions">
+                        <a href="{% url 'scheduling:reservar_fecha' %}" class="btn btn--ghost">Atrás</a>
+                        <button type="submit" class="btn btn--primary">Continuar</button>
+                    </div>
+                </form>
+            {% else %}
+                <div class="empty-state">No hay horarios disponibles ese día.</div>
+                <div class="form-actions" style="justify-content:center; margin-top:20px;">
+                    <a href="{% url 'scheduling:reservar_fecha' %}" class="btn btn--ghost">Elegir otra fecha</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

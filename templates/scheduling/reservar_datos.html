@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Tus datos — Dental San Antonio{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container" style="max-width:640px;">
+        {% include "scheduling/_wizard_steps.html" %}
+        <div class="wizard-card">
+            <h2 class="section-title">Tus datos</h2>
+            <p class="section-subtitle">Para poder contactarte y confirmar tu cita.</p>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form.nombre.label_tag }}
+                    {{ form.nombre }}
+                    {{ form.nombre.errors }}
+                </div>
+                <div class="form-group">
+                    {{ form.telefono.label_tag }}
+                    {{ form.telefono }}
+                    {{ form.telefono.errors }}
+                </div>
+                <div class="form-group">
+                    {{ form.email.label_tag }}
+                    {{ form.email }}
+                    {{ form.email.errors }}
+                </div>
+                <div class="form-actions">
+                    <a href="{% url 'scheduling:reservar_horario' %}" class="btn btn--ghost">Atrás</a>
+                    <button type="submit" class="btn btn--primary">Continuar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

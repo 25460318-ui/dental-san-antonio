@@ -1,0 +1,52 @@
+{% extends "scheduling/panel_base.html" %}
+{% block title %}Buscar citas — Panel{% endblock %}
+{% block panel_content %}
+
+<h2 class="section-title" style="text-align:left;">Buscar citas</h2>
+<p class="section-subtitle" style="text-align:left; margin-bottom:24px;">
+    Busca por nombre o teléfono del paciente, sin importar la fecha.
+</p>
+
+<div class="wizard-card" style="margin-bottom:24px; padding:20px;">
+    <form method="get" style="display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end;">
+        <div class="form-group" style="margin-bottom:0; min-width:220px;">
+            <label>Nombre o teléfono</label>
+            <input type="text" name="q" value="{{ query }}" placeholder="Ej. Juan Pérez o 312...">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+            <label>Cuándo</label>
+            <select name="tiempo">
+                <option value="todas" {% if tiempo == "todas" %}selected{% endif %}>Todas las fechas</option>
+                <option value="hoy" {% if tiempo == "hoy" %}selected{% endif %}>Hoy</option>
+                <option value="manana" {% if tiempo == "manana" %}selected{% endif %}>Mañana</option>
+                <option value="semana" {% if tiempo == "semana" %}selected{% endif %}>Próximos 7 días</option>
+                <option value="pasadas" {% if tiempo == "pasadas" %}selected{% endif %}>Fechas pasadas</option>
+            </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+            <label>Estado</label>
+            <select name="estado">
+                <option value="">Todos</option>
+                {% for value, label in estados %}
+                    <option value="{{ value }}" {% if estado == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn--ghost">Buscar</button>
+    </form>
+</div>
+
+{% include "scheduling/_citas_tabla.html" with mostrar_fecha=True vacio_mensaje="No se encontraron citas con esa búsqueda." %}
+
+{% if citas.has_other_pages %}
+<div style="display:flex; justify-content:center; gap:12px; margin-top:20px;">
+    {% if citas.has_previous %}
+        <a href="?q={{ query }}&tiempo={{ tiempo }}&estado={{ estado }}&pagina={{ citas.previous_page_number }}">&larr; Anterior</a>
+    {% endif %}
+    <span>Página {{ citas.number }} de {{ citas.paginator.num_pages }}</span>
+    {% if citas.has_next %}
+        <a href="?q={{ query }}&tiempo={{ tiempo }}&estado={{ estado }}&pagina={{ citas.next_page_number }}">Siguiente &rarr;</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

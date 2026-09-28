@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es-mx">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Panel — Dental San Antonio{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="icon" href="{% static 'images/logo.png' %}">
+</head>
+<body style="background:var(--color-bg-alt); min-height:100vh;">
+    <header class="header">
+        <div class="header__inner">
+            <a class="header__brand" href="{% url 'scheduling:panel_dashboard' %}">
+                <img src="{% static 'images/logo.png' %}" alt="Dental San Antonio">
+                <span>Dental San Antonio</span>
+            </a>
+            <nav class="panel-nav">
+                <a href="{% url 'scheduling:panel_dashboard' %}">Inicio</a>
+                <a href="{% url 'scheduling:panel_agenda' %}">Agenda</a>
+                <a href="{% url 'scheduling:panel_buscar_citas' %}">Buscar</a>
+                <a href="{% url 'scheduling:panel_cita_nueva' %}">Nueva cita</a>
+                <a href="{% url 'scheduling:panel_disponibilidad' %}">Disponibilidad</a>
+                <a href="{% url 'scheduling:panel_emergencias' %}">
+                    Emergencias
+                    {% if solicitudes_emergencia_pendientes %}
+                        <span class="badge badge--emergencia">{{ solicitudes_emergencia_pendientes }}</span>
+                    {% endif %}
+                </a>
+                <a href="/admin/" target="_blank" rel="noopener">Administración</a>
+                <span class="panel-nav__user">{{ request.user.get_full_name|default:request.user.username }}</span>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn--ghost panel-nav__logout">Cerrar sesión</button>
+                </form>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <div class="container" style="padding-top:32px; padding-bottom:48px;">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'error' %}alert--error{% elif message.tags == 'warning' %}alert--warning{% else %}alert--info{% endif %}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            {% block panel_content %}{% endblock %}
+        </div>
+    </main>
+</body>
+</html>

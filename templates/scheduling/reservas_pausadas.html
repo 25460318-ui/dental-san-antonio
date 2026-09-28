@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Reservas en línea pausadas — Dental San Antonio{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container" style="max-width:560px; text-align:center;">
+        <h2 class="section-title">Reservas en línea pausadas temporalmente</h2>
+        <p class="section-subtitle">
+            En este momento no podemos recibir reservas en línea. Llámanos directamente y con gusto
+            te agendamos tu cita.
+        </p>
+        <p>
+            <a href="tel:{{ clinic_info.telefono_1 }}" class="btn btn--primary">Llamar: {{ clinic_info.telefono_1 }}</a>
+        </p>
+        <a href="{% url 'core:home' %}">Volver al inicio</a>
+    </div>
+</section>
+{% endblock %}

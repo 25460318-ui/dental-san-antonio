@@ -1,0 +1,214 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es-mx">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block description %}Dental San Antonio — consultorio dental en Villa de Álvarez, Colima. Agenda tu cita en línea.{% endblock %}">
+    <meta name="theme-color" content="#3ABAD1">
+    <title>{% block title %}Dental San Antonio{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="icon" href="{% static 'images/logo.png' %}">
+</head>
+<body>
+    {% if avisos_publicos %}
+        {% for aviso in avisos_publicos %}
+            <div class="aviso-banner" data-aviso-id="{{ aviso.pk }}">
+                <div class="container aviso-banner__inner">
+                    <span class="aviso-banner__icon">⚠️</span>
+                    <span><strong>{{ aviso.titulo }}:</strong> {{ aviso.mensaje }}</span>
+                    <button type="button" class="aviso-banner__cerrar" aria-label="Cerrar aviso">&times;</button>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <header class="header">
+        <div class="header__inner">
+            <a class="header__brand" href="{% url 'core:home' %}">
+                <img src="{% static 'images/logo.png' %}" alt="Dental San Antonio">
+                <span>Dental San Antonio</span>
+            </a>
+            <button class="header__toggle" id="nav-toggle" aria-label="Abrir menú">&#9776;</button>
+            <nav class="header__nav" id="header-nav">
+                <a href="#servicios">Servicios</a>
+                <a href="#convenios">Convenios</a>
+                <a href="#ubicacion">Ubicación</a>
+                <a href="#contacto">Contacto</a>
+                <a href="{% url 'scheduling:reservar_categoria' %}" class="btn btn--primary">Agendar cita</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <button type="button" class="asistencia-flotante" id="asistencia-abrir">💬 Asistencia</button>
+
+    <div class="asistencia-panel" id="asistencia-panel">
+        <div class="asistencia-panel__header">
+            <span>Asistente Dental San Antonio</span>
+            <button type="button" id="asistencia-cerrar" aria-label="Cerrar asistencia">&times;</button>
+        </div>
+        <div class="asistencia-panel__mensajes" id="asistencia-mensajes">
+            <div class="mensaje mensaje--bot">
+                ¡Hola! 👋 Soy el asistente de Dental San Antonio. Puedo ayudarte con dudas rápidas
+                sobre citas, precios, ubicación y convenios. No puedo diagnosticar molestias ni
+                sustituir al doctor — para eso, agenda tu cita o llámanos.
+            </div>
+        </div>
+        <div class="asistencia-panel__chips" id="asistencia-chips">
+            <button type="button" class="chip" data-intent="agendar">¿Cómo agendo una cita?</button>
+            <button type="button" class="chip" data-intent="servicios">¿Qué servicios ofrecen?</button>
+            <button type="button" class="chip" data-intent="precio_limpieza">¿Cuánto cuesta una limpieza?</button>
+            <button type="button" class="chip" data-intent="anticipo">¿Qué anticipo necesito?</button>
+            <button type="button" class="chip" data-intent="ubicacion">¿Dónde están ubicados?</button>
+            <button type="button" class="chip" data-intent="telefono">¿Cuál es el teléfono?</button>
+            <button type="button" class="chip" data-intent="emergencia">Tengo una emergencia</button>
+            <button type="button" class="chip" data-intent="convenios">¿Qué convenios tienen?</button>
+        </div>
+        <form class="asistencia-panel__form" id="asistencia-form">
+            <input type="text" id="asistencia-input" placeholder="Escribe tu pregunta..." autocomplete="off">
+            <button type="submit" class="btn btn--primary panel-btn-sm">Enviar</button>
+        </form>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__grid">
+                <div>
+                    <h4>{{ clinic_info.nombre|default:"Dental San Antonio" }}</h4>
+                    <p>{{ clinic_info.direccion }}</p>
+                </div>
+                <div>
+                    <h4>Contacto</h4>
+                    <p><a href="tel:{{ clinic_info.telefono_1 }}">{{ clinic_info.telefono_1 }}</a></p>
+                    {% if clinic_info.telefono_2 %}<p><a href="tel:{{ clinic_info.telefono_2 }}">{{ clinic_info.telefono_2 }}</a></p>{% endif %}
+                    <p><a href="mailto:{{ clinic_info.email }}">{{ clinic_info.email }}</a></p>
+                </div>
+                <div>
+                    <h4>Síguenos</h4>
+                    {% if clinic_info.facebook_url %}<p><a href="{{ clinic_info.facebook_url }}" target="_blank" rel="noopener">Facebook</a></p>{% endif %}
+                    {% if clinic_info.instagram_url %}<p><a href="{{ clinic_info.instagram_url }}" target="_blank" rel="noopener">Instagram</a></p>{% endif %}
+                </div>
+            </div>
+            <div class="footer__bottom">
+                &copy; {% now "Y" %} {{ clinic_info.nombre|default:"Dental San Antonio" }}. Todos los derechos reservados.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.querySelectorAll('.aviso-banner').forEach(function (banner) {
+            var id = banner.getAttribute('data-aviso-id');
+            var key = 'aviso_cerrado_' + id;
+            try {
+                if (sessionStorage.getItem(key)) {
+                    banner.style.display = 'none';
+                    return;
+                }
+            } catch (e) {}
+            var cerrar = banner.querySelector('.aviso-banner__cerrar');
+            cerrar.addEventListener('click', function () {
+                banner.style.display = 'none';
+                try { sessionStorage.setItem(key, '1'); } catch (e) {}
+            });
+        });
+
+        (function () {
+            var panel = document.getElementById('asistencia-panel');
+            var abrir = document.getElementById('asistencia-abrir');
+            var cerrar = document.getElementById('asistencia-cerrar');
+            var mensajes = document.getElementById('asistencia-mensajes');
+            var form = document.getElementById('asistencia-form');
+            var input = document.getElementById('asistencia-input');
+            var urlResponder = "{% url 'core:asistencia_responder' %}";
+
+            function agregarMensaje(texto, tipo, enlace) {
+                var div = document.createElement('div');
+                div.className = 'mensaje mensaje--' + tipo;
+                div.textContent = texto;
+                if (enlace && enlace.url) {
+                    var a = document.createElement('a');
+                    a.href = enlace.url;
+                    a.textContent = enlace.texto;
+                    a.className = 'mensaje__enlace';
+                    div.appendChild(document.createElement('br'));
+                    div.appendChild(a);
+                }
+                mensajes.appendChild(div);
+                mensajes.scrollTop = mensajes.scrollHeight;
+            }
+
+            function preguntar(intent, texto, params) {
+                agregarMensaje(texto, 'usuario');
+                var qs = params || ('intent=' + encodeURIComponent(intent));
+                fetch(urlResponder + '?' + qs)
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        agregarMensaje(data.texto, 'bot', { url: data.enlace_url, texto: data.enlace_texto });
+                    })
+                    .catch(function () {
+                        agregarMensaje('Tuvimos un problema para responder. Intenta de nuevo o llámanos directamente.', 'bot');
+                    });
+            }
+
+            abrir.addEventListener('click', function () {
+                panel.classList.add('is-open');
+                abrir.hidden = true;
+                input.focus();
+            });
+            cerrar.addEventListener('click', function () {
+                panel.classList.remove('is-open');
+                abrir.hidden = false;
+            });
+
+            document.getElementById('asistencia-chips').addEventListener('click', function (e) {
+                var boton = e.target.closest('.chip');
+                if (!boton) return;
+                preguntar(boton.dataset.intent, boton.textContent);
+            });
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var texto = input.value.trim();
+                if (!texto) return;
+                preguntar(null, texto, 'q=' + encodeURIComponent(texto));
+                input.value = '';
+            });
+        })();
+
+        document.getElementById('nav-toggle').addEventListener('click', function () {
+            document.getElementById('header-nav').classList.toggle('is-open');
+        });
+
+        var header = document.querySelector('.header');
+        var onScroll = function () {
+            header.classList.toggle('header--scrolled', window.scrollY > 8);
+        };
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+
+        if ('IntersectionObserver' in window) {
+            var revealObserver = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        revealObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.15 });
+            document.querySelectorAll('.reveal').forEach(function (el) {
+                revealObserver.observe(el);
+            });
+        } else {
+            document.querySelectorAll('.reveal').forEach(function (el) {
+                el.classList.add('is-visible');
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+{% extends "scheduling/panel_base.html" %}
+{% block title %}Agenda — Panel{% endblock %}
+{% block panel_content %}
+
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:20px;">
+    <h2 class="section-title" style="margin:0; text-align:left;">Agenda del {{ fecha|date:"d/m/Y" }}</h2>
+    <a href="{% url 'scheduling:panel_cita_nueva' %}" class="btn btn--primary">+ Nueva cita presencial</a>
+</div>
+
+<div class="wizard-card" style="margin-bottom:24px; padding:20px;">
+    <form method="get" style="display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end;">
+        <div class="form-group" style="margin-bottom:0;">
+            <label>Fecha</label>
+            <input type="date" name="fecha" value="{{ fecha|date:'Y-m-d' }}">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+            <label>Origen</label>
+            <select name="origen">
+                <option value="">Todos</option>
+                {% for value, label in origenes %}
+                    <option value="{{ value }}" {% if filtros.origen == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+            <label>Tipo</label>
+            <select name="tipo">
+                <option value="">Todos</option>
+                {% for value, label in tipos %}
+                    <option value="{{ value }}" {% if filtros.tipo == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+            <label>Estado</label>
+            <select name="estado">
+                <option value="">Todos</option>
+                {% for value, label in estados %}
+                    <option value="{{ value }}" {% if filtros.estado == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+            <label>Servicio</label>
+            <select name="servicio">
+                <option value="">Todos</option>
+                {% for s in servicios %}
+                    <option value="{{ s.pk }}" {% if filtros.servicio == s.pk|stringformat:"s" %}selected{% endif %}>{{ s.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+            <label>Dolor mínimo</label>
+            <input type="number" name="dolor_min" min="0" max="10" value="{{ filtros.dolor_min }}" style="width:80px;">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+            <label>Anticipo</label>
+            <select name="estado_anticipo">
+                <option value="">Todos</option>
+                {% for value, label in estados_anticipo %}
+                    <option value="{{ value }}" {% if filtros.estado_anticipo == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn--ghost">Filtrar</button>
+    </form>
+</div>
+
+<div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+    <a href="?fecha={{ dia_anterior|date:'Y-m-d' }}">&larr; Día anterior</a>
+    <a href="?fecha={{ dia_siguiente|date:'Y-m-d' }}">Día siguiente &rarr;</a>
+</div>
+
+{% include "scheduling/_citas_tabla.html" with vacio_mensaje="No hay citas para este día con los filtros seleccionados." %}
+{% endblock %}

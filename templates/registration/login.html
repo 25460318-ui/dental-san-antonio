@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Acceso del personal — Dental San Antonio{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container" style="max-width:420px;">
+        <div class="wizard-card">
+            <h2 class="section-title">Acceso del personal</h2>
+            <p class="section-subtitle">Inicia sesión para entrar al panel de agenda.</p>
+            {% if form.errors %}
+                <div class="alert alert--error">Usuario o contraseña incorrectos.</div>
+            {% endif %}
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form.username.label_tag }}
+                    {{ form.username }}
+                </div>
+                <div class="form-group">
+                    {{ form.password.label_tag }}
+                    {{ form.password }}
+                </div>
+                <input type="hidden" name="next" value="{{ next }}">
+                <div class="form-actions" style="justify-content:flex-end;">
+                    <button type="submit" class="btn btn--primary">Entrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

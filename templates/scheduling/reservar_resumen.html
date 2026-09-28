@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %}Resumen de tu cita — Dental San Antonio{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container" style="max-width:640px;">
+        {% include "scheduling/_wizard_steps.html" %}
+        <div class="wizard-card">
+            <h2 class="section-title">Revisa tu cita</h2>
+            <p class="section-subtitle">Confirma que todo esté correcto antes de reservar.</p>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert--error">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <table class="summary-table">
+                <tr><td>Servicio</td><td>{{ servicio.nombre }}</td></tr>
+                <tr><td>Fecha</td><td>{{ fecha|date:"d/m/Y" }}</td></tr>
+                <tr><td>Horario</td><td>{{ hora_inicio|time:"H:i" }} - {{ hora_fin|time:"H:i" }}</td></tr>
+                <tr><td>Paciente</td><td>{{ nombre }}</td></tr>
+                <tr><td>Teléfono</td><td>{{ telefono }}</td></tr>
+                {% if convenio %}<tr><td>Convenio</td><td>{{ convenio.nombre }}</td></tr>{% endif %}
+                <tr><td>Nivel de dolor reportado</td><td>{{ nivel_dolor }}/10</td></tr>
+
+                <tr><td>Precio del servicio</td><td>${{ precio_original|floatformat:0|intcomma }}</td></tr>
+                {% if descuento > 0 %}<tr><td>Descuento por convenio</td><td>-${{ descuento|floatformat:0|intcomma }}</td></tr>{% endif %}
+                {% if recargo_dolor > 0 %}<tr><td>Cargo por nivel de dolor alto</td><td>+${{ recargo_dolor|floatformat:0|intcomma }}</td></tr>{% endif %}
+                <tr class="total"><td>Precio final</td><td>${{ precio_final|floatformat:0|intcomma }}</td></tr>
+                <tr><td>Anticipo requerido ({{ anticipo_porcentaje|floatformat:0 }}%)</td><td>${{ anticipo_requerido|floatformat:0|intcomma }}</td></tr>
+            </table>
+
+            <div class="alert alert--info">
+                Para confirmar tu cita se requiere un anticipo del {{ anticipo_porcentaje|floatformat:0 }}%.
+                El método de pago (transferencia, tarjeta, etc.) todavía está por definirse — el consultorio
+                se pondrá en contacto contigo para coordinarlo.
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-actions">
+                    <a href="{% url 'scheduling:reservar_dolor' %}" class="btn btn--ghost">Atrás</a>
+                    <button type="submit" class="btn btn--primary">Confirmar cita</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Nivel de dolor — Dental San Antonio{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container" style="max-width:640px;">
+        {% include "scheduling/_wizard_steps.html" %}
+        <div class="wizard-card">
+            <h2 class="section-title">¿Qué tanto dolor sientes ahora mismo?</h2>
+            <p class="section-subtitle">Esto nos ayuda a organizar mejor la agenda. No sustituye un diagnóstico.</p>
+            <div class="alert alert--info">
+                Sé honesto/a con tu nivel de dolor: si es {{ clinic_info.dolor_umbral_recargo }} o más,
+                se aplica un cargo adicional de ${{ clinic_info.dolor_recargo_monto|floatformat:0 }} por
+                ser atendido con mayor urgencia.
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="pain-value" id="pain-value">{{ form.nivel_dolor.value|default:0 }}</div>
+                    {{ form.nivel_dolor }}
+                    <div class="pain-scale">
+                        <span>0 · Sin dolor</span>
+                        <span>10 · Dolor insoportable</span>
+                    </div>
+                    {{ form.nivel_dolor.errors }}
+                </div>
+                <div class="form-actions">
+                    <a href="{% url 'scheduling:reservar_convenio' %}" class="btn btn--ghost">Atrás</a>
+                    <button type="submit" class="btn btn--primary">Continuar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+<script>
+    var slider = document.querySelector('input[name="nivel_dolor"]');
+    var display = document.getElementById('pain-value');
+    slider.addEventListener('input', function () {
+        display.textContent = slider.value;
+    });
+</script>
+{% endblock %}

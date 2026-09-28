@@ -1,0 +1,7 @@
+<div class="wizard-steps">
+    {% for n in "12345678" %}
+        {% with n=n|add:"0" %}
+            <span class="wizard-step {% if paso == n %}is-active{% elif paso > n %}is-done{% endif %}">{{ n }}</span>
+        {% endwith %}
+    {% endfor %}
+</div>

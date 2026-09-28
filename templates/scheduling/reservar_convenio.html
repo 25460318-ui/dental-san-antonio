@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Convenio — Dental San Antonio{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container" style="max-width:640px;">
+        {% include "scheduling/_wizard_steps.html" %}
+        <div class="wizard-card">
+            <h2 class="section-title">¿Perteneces a algún convenio?</h2>
+            <p class="section-subtitle">Si perteneces a una institución con convenio, selecciónala para ver tu precio especial.</p>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form.convenio.label_tag }}
+                    {{ form.convenio }}
+                    {{ form.convenio.errors }}
+                </div>
+                <div class="form-group">
+                    {{ form.identificador_convenio.label_tag }}
+                    {{ form.identificador_convenio }}
+                    <small>{{ form.identificador_convenio.help_text }}</small>
+                    {{ form.identificador_convenio.errors }}
+                </div>
+                <div class="form-actions">
+                    <a href="{% url 'scheduling:reservar_datos' %}" class="btn btn--ghost">Atrás</a>
+                    <button type="submit" class="btn btn--primary">Continuar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

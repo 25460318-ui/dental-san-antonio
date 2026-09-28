@@ -1,0 +1,56 @@
+{% if citas %}
+<div class="wizard-card" style="padding:0; overflow-x:auto;">
+    <table class="panel-table">
+        <thead>
+            <tr>
+                {% if mostrar_fecha %}<th>Fecha</th>{% endif %}
+                <th>Hora</th><th>Paciente</th><th>Servicio</th><th>Convenio</th><th>Origen</th><th>Tipo</th><th>Dolor</th><th>Estado</th><th>Anticipo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cita in citas %}
+            <tr class="{% if cita.tipo == 'emergencia' %}panel-row--emergencia{% endif %}">
+                {% if mostrar_fecha %}<td>{{ cita.fecha|date:"d/m/Y" }}</td>{% endif %}
+                <td>{{ cita.hora_inicio|time:"H:i" }}<br><small>{{ cita.hora_fin|time:"H:i" }}</small></td>
+                <td>{{ cita.paciente.nombre }}<br><small>{{ cita.paciente.telefono }}</small></td>
+                <td>{{ cita.servicio.nombre }}</td>
+                <td>{{ cita.convenio.nombre|default:"—" }}</td>
+                <td><span class="badge badge--{{ cita.origen }}">{{ cita.get_origen_display }}</span></td>
+                <td>{% if cita.tipo == 'emergencia' %}<span class="badge badge--emergencia">Emergencia</span>{% else %}Regular{% endif %}</td>
+                <td>{% if cita.nivel_dolor is not None %}<span class="badge {% if cita.nivel_dolor >= 8 %}badge--dolor-alto{% endif %}">{{ cita.nivel_dolor }}/10</span>{% else %}—{% endif %}</td>
+                <td>
+                    <form method="post" action="{% url 'scheduling:panel_cambiar_estado' cita.pk %}" style="display:flex; gap:6px; align-items:center;">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                        <select name="estado_cita">
+                            {% for value, label in estados %}
+                                <option value="{{ value }}" {% if cita.estado_cita == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn--ghost panel-btn-sm">Guardar</button>
+                    </form>
+                </td>
+                <td>
+                    <div style="margin-bottom:6px;">
+                        <span class="badge badge--anticipo-{{ cita.estado_anticipo }}">{{ cita.get_estado_anticipo_display }}</span>
+                        <br><small>${{ cita.anticipo_requerido|floatformat:0 }}</small>
+                    </div>
+                    <form method="post" action="{% url 'scheduling:panel_cambiar_estado_anticipo' cita.pk %}" style="display:flex; gap:6px; align-items:center;">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                        <select name="estado_anticipo">
+                            {% for value, label in estados_anticipo %}
+                                <option value="{{ value }}" {% if cita.estado_anticipo == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn--ghost panel-btn-sm">Guardar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">{{ vacio_mensaje|default:"No hay citas con los filtros seleccionados." }}</div>
+{% endif %}

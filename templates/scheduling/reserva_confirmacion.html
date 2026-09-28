@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %}Cita registrada — Dental San Antonio{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container" style="max-width:640px; text-align:center;">
+        <div class="icon-badge" style="margin:0 auto 16px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+        </div>
+        <h2 class="section-title">¡Tu cita quedó registrada!</h2>
+        <p class="section-subtitle">
+            {{ resumen.servicio }} — {{ resumen.fecha }} a las {{ resumen.hora_inicio }}.
+            Tu cita está <strong>pendiente de confirmación</strong>; el consultorio se pondrá en contacto
+            contigo para coordinar el anticipo del {{ resumen.anticipo_porcentaje|floatformat:0 }}%
+            (${{ resumen.anticipo_requerido|floatformat:0|intcomma }}).
+        </p>
+        <p>Si tienes dudas o necesitas hacer algún cambio, llámanos al <a href="tel:{{ clinic_info.telefono_1 }}">{{ clinic_info.telefono_1 }}</a>.</p>
+
+        <div class="hero__actions" style="justify-content:center; margin-bottom:20px;">
+            <a href="{% url 'scheduling:reserva_comprobante_pdf' %}" class="btn btn--ghost">📄 Descargar comprobante (PDF)</a>
+            <a href="{% url 'scheduling:reserva_comprobante_ics' %}" class="btn btn--ghost">📅 Agregar a mi calendario</a>
+        </div>
+
+        <a href="{% url 'core:home' %}" class="btn btn--primary">Volver al inicio</a>
+    </div>
+</section>
+{% endblock %}
