@@ -65,3 +65,12 @@ class StaffProfile(models.Model):
         else:
             self.user.groups.add(secretaria_group)
             self.user.groups.remove(doctor_group)
+        # El panel enlaza a /admin/ para lo que todavía no tiene pantalla
+        # propia (convenios, avisos, catálogo). Sin is_staff=True, Django
+        # rechaza el login ahí aunque la persona sí tenga los permisos de
+        # su grupo — así que cualquier miembro del personal lo necesita.
+        # Lo que puede hacer una vez dentro lo sigue limitando el permiso
+        # de su grupo, no is_staff.
+        if not self.user.is_staff:
+            self.user.is_staff = True
+            self.user.save(update_fields=["is_staff"])

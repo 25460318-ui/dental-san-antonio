@@ -137,6 +137,17 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Seguridad para producción — no afecta el desarrollo local (DEBUG=True).
+# Se activan solas en cuanto se despliegue con DJANGO_DEBUG=False y detrás
+# de HTTPS (Fase 15). Ver: python manage.py check --deploy
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 60 * 60 * 24 * 7  # 1 semana; se puede subir después
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
 LOGIN_URL = '/panel/accounts/login/'
 LOGIN_REDIRECT_URL = '/panel/'
 LOGOUT_REDIRECT_URL = '/'

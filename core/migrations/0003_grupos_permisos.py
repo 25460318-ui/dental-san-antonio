@@ -1,3 +1,5 @@
+from django.apps import apps as global_apps
+from django.contrib.auth.management import create_permissions
 from django.db import migrations
 
 DOCTOR_FULL = [
@@ -29,6 +31,15 @@ SECRETARIA_PERMS = [
 
 
 def crear_grupos(apps, schema_editor):
+    # `post_migrate` (que crea los permisos de cada modelo) solo se dispara
+    # al terminar TODO el `migrate`, no app por app. Si alguien corre
+    # `migrate` desde cero en una sola llamada (como al desplegar, o como
+    # hacen las pruebas automatizadas), los permisos de catalog/scheduling
+    # todavía no existirían en este punto. Los forzamos aquí para no
+    # depender de en qué orden/lotes se haya migrado.
+    for app_label in ("catalog", "scheduling", "core"):
+        create_permissions(global_apps.get_app_config(app_label), apps=apps, verbosity=0)
+
     Group = apps.get_model("auth", "Group")
     Permission = apps.get_model("auth", "Permission")
     ContentType = apps.get_model("contenttypes", "ContentType")

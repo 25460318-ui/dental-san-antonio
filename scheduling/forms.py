@@ -6,6 +6,20 @@ from catalog.models import CategoriaServicio, Convenio, Servicio
 from .models import Cita, SolicitudEmergencia
 
 
+class HoneypotForm(forms.Form):
+    """
+    Campo trampa contra bots de spam: está oculto con CSS, así que ninguna
+    persona real lo ve ni lo llena, pero los bots que rellenan formularios
+    automáticamente sí suelen hacerlo. Si llega con contenido, se descarta
+    el envío sin avisarle al bot que fue detectado (para no darle pistas).
+    """
+
+    sitio_web = forms.CharField(required=False, widget=forms.HiddenInput())
+
+    def es_spam(self):
+        return bool(self.cleaned_data.get("sitio_web"))
+
+
 class CategoriaForm(forms.Form):
     categoria = forms.ModelChoiceField(
         queryset=CategoriaServicio.objects.filter(servicios__activo=True).distinct(),
@@ -50,7 +64,7 @@ class HorarioForm(forms.Form):
         self.fields["horario"].choices = choices or []
 
 
-class DatosPacienteForm(forms.Form):
+class DatosPacienteForm(HoneypotForm):
     nombre = forms.CharField(label="Nombre completo", max_length=150)
     telefono = forms.CharField(label="Teléfono", max_length=20)
     email = forms.EmailField(label="Correo (opcional)", required=False)
@@ -159,7 +173,7 @@ class BloqueoForm(forms.Form):
         return cleaned
 
 
-class EmergenciaForm(forms.Form):
+class EmergenciaForm(HoneypotForm):
     nombre = forms.CharField(label="Nombre completo", max_length=150)
     telefono = forms.CharField(label="Teléfono de contacto", max_length=20)
     motivo = forms.CharField(

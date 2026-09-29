@@ -152,7 +152,11 @@ def reservar_datos(request):
     if request.method == "POST":
         form = DatosPacienteForm(request.POST)
         if form.is_valid():
-            wizard.update(form.cleaned_data)
+            if form.es_spam():
+                return redirect("scheduling:reservar_categoria")
+            datos = form.cleaned_data
+            datos.pop("sitio_web", None)
+            wizard.update(datos)
             request.session.modified = True
             return redirect("scheduling:reservar_convenio")
     else:
@@ -325,7 +329,14 @@ def emergencia_formulario(request):
     clinic_info = ClinicInfo.objects.first()
     form = EmergenciaForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
-        solicitud = SolicitudEmergencia.objects.create(**form.cleaned_data)
+        if form.es_spam():
+            # No se guarda nada, pero se le muestra éxito igual: así no le
+            # damos pistas al bot de que lo detectamos.
+            request.session["emergencia_confirmada"] = True
+            return redirect("scheduling:emergencia_confirmacion")
+        datos = form.cleaned_data
+        datos.pop("sitio_web", None)
+        solicitud = SolicitudEmergencia.objects.create(**datos)
         enviar_alerta_secretaria_nueva_emergencia(solicitud)
         request.session["emergencia_confirmada"] = True
         return redirect("scheduling:emergencia_confirmacion")

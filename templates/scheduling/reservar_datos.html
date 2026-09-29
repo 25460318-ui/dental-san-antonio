@@ -9,6 +9,7 @@
             <p class="section-subtitle">Para poder contactarte y confirmar tu cita.</p>
             <form method="post">
                 {% csrf_token %}
+                {{ form.sitio_web }}
                 <div class="form-group">
                     {{ form.nombre.label_tag }}
                     {{ form.nombre }}
