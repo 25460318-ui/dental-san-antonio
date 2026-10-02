@@ -5,9 +5,7 @@
 
 <section class="hero" id="agendar">
     <div class="container reveal">
-        <div class="hero__brand-badge">
-            <img src="{% static 'images/logo-oficial.png' %}" alt="Dental San Antonio">
-        </div>
+        <img src="{% static 'images/logo-oficial.png' %}" alt="Dental San Antonio">
         <h1>Dental San Antonio</h1>
         <p>{{ clinic_info.mensaje_hero }}</p>
         <div class="hero__actions">
@@ -20,43 +18,32 @@
 
 <section class="section" id="convenios">
     <div class="container">
-        <h2 class="section-title reveal">Convenios y Descuentos</h2>
-        <p class="section-subtitle reveal">Trabajamos con sindicatos e instituciones para ofrecerte precios y promociones exclusivas.</p>
+        <h2 class="section-title reveal">Convenios</h2>
+        <p class="section-subtitle reveal">Trabajamos con las siguientes instituciones para ofrecerte precios y promociones exclusivas.</p>
 
-        <div class="convenios-showcase reveal">
-            <div class="convenios-showcase__banner">
-                <img src="{% static 'images/banner-convenios.png' %}" alt="Descuentos y Promociones para Sindicatos" class="convenios-showcase__img">
-            </div>
-            <div class="convenios-showcase__content">
-                <span class="convenios-badge-pill">Tarifas Preferenciales</span>
-                <h3>Beneficios para agremiados y familias</h3>
-                <p>
-                    Si tú o un familiar directo pertenecen a alguno de los sindicatos con convenio, cuentan con tarifas preferenciales en consultas, limpiezas, extracciones y tratamientos especializados en Dental San Antonio.
-                </p>
-
-                {% if convenios %}
-                    <div class="convenios-list">
-                        {% for convenio in convenios %}
-                            <div class="convenio-card">
-                                {% if convenio.logo %}
-                                    <img src="{{ convenio.logo.url }}" alt="{{ convenio.nombre }}">
-                                {% else %}
-                                    <div class="convenio-card__badge">{{ convenio.nombre|slice:":2"|upper }}</div>
-                                {% endif %}
-                                <div>
-                                    <strong>{{ convenio.nombre }}</strong>
-                                    {% if convenio.descripcion %}<div>{{ convenio.descripcion }}</div>{% endif %}
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-
-                <div class="convenios-showcase__action">
-                    <a href="{% url 'scheduling:reservar_categoria' %}" class="btn btn--primary">Agendar con precio de convenio</a>
-                </div>
-            </div>
+        <div style="text-align:center; margin-bottom:28px;">
+            <img src="{% static 'images/banner-convenios.png' %}" alt="Convenios y Descuentos" style="max-width:440px; width:100%; height:auto; margin:0 auto; border-radius:var(--radius); box-shadow:var(--shadow);">
         </div>
+
+        {% if convenios %}
+            <div class="convenios reveal">
+                {% for convenio in convenios %}
+                    <div class="convenio-card">
+                        {% if convenio.logo %}
+                            <img src="{{ convenio.logo.url }}" alt="{{ convenio.nombre }}">
+                        {% else %}
+                            <div class="convenio-card__badge">{{ convenio.nombre|slice:":2"|upper }}</div>
+                        {% endif %}
+                        <div>
+                            <strong>{{ convenio.nombre }}</strong>
+                            {% if convenio.descripcion %}<div>{{ convenio.descripcion }}</div>{% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">Muy pronto verás aquí los convenios disponibles.</div>
+        {% endif %}
     </div>
 </section>
 
@@ -105,108 +92,31 @@
     </div>
 </section>
 
-<section class="section section--kids" id="odontopediatria">
-    <div class="container">
-        <div class="kids-showcase reveal">
-            <div class="kids-showcase__image-wrap">
-                <img src="{% static 'images/dr-coco-odontopediatria.png' %}" alt="Dr. Coco — Odontopediatría en Dental San Antonio" class="kids-showcase__img">
-            </div>
-            <div class="kids-showcase__info">
-                <span class="kids-badge-pill">Odontopediatría Especializada</span>
-                <h2 class="section-title" style="text-align: left; margin-bottom: 8px;">¡Sonrisas felices y sin miedo con el Dr. Coco!</h2>
-                <p class="kids-showcase__lead">
-                    Sabemos lo importante que es la primera visita al dentista. En Dental San Antonio brindamos atención cariñosa, paciente y divertida para que tus pequeños disfruten cuidar sus dientes desde su primera infancia.
-                </p>
-                <div class="kids-grid">
-                    <div class="kids-item">
-                        <div class="kids-item__icon">🦖</div>
-                        <div>
-                            <strong>Atención libre de miedo</strong>
-                            <p>Técnicas de adaptación amigable y juegos para que los niños se sientan seguros y en confianza.</p>
-                        </div>
-                    </div>
-                    <div class="kids-item">
-                        <div class="kids-item__icon">🛡️</div>
-                        <div>
-                            <strong>Prevención y selladores</strong>
-                            <p>Aplicación de flúor preventivo y selladores de fosetas para blindar sus dientes contra caries.</p>
-                        </div>
-                    </div>
-                    <div class="kids-item">
-                        <div class="kids-item__icon">🦷</div>
-                        <div>
-                            <strong>Tratamientos infantiles</strong>
-                            <p>Resinas, pulpotomías y coronitas diseñadas especialmente para dientes temporales y permanentes.</p>
-                        </div>
-                    </div>
-                    <div class="kids-item">
-                        <div class="kids-item__icon">🎈</div>
-                        <div>
-                            <strong>Premios y motivación</strong>
-                            <p>Reconocimiento a su valentía para que acudir a sus revisiones sea una experiencia positiva.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="kids-showcase__footer">
-                    <a href="{% url 'scheduling:reservar_categoria' %}?categoria=6" class="btn btn--primary">Agendar cita con el Dr. Coco</a>
-                    <a href="{% url 'scheduling:reservar_categoria' %}?categoria=6" class="btn btn--ghost">Ver tratamientos infantiles</a>
-                </div>
-            </div>
+<section class="section" id="odontopediatria">
+    <div class="container" style="text-align:center;">
+        <h2 class="section-title reveal">Odontopediatría</h2>
+        <p class="section-subtitle reveal">Atención dental infantil amigable y divertida con el Dr. Coco.</p>
+        <div style="max-width:380px; margin:0 auto 24px;">
+            <img src="{% static 'images/dr-coco-odontopediatria.png' %}" alt="Dr. Coco — Odontopediatría" style="width:100%; height:auto; margin:0 auto;">
+        </div>
+        <div>
+            <a href="{% url 'scheduling:reservar_categoria' %}?categoria=6" class="btn btn--primary">Agendar cita con el Dr. Coco</a>
         </div>
     </div>
 </section>
 
-<section class="section section--productos" id="productos">
-    <div class="container">
-        <div class="productos-showcase reveal">
-            <div class="productos-showcase__image-wrap">
-                <img src="{% static 'images/banner-productos.png' %}" alt="DSA Productos Dentales - Pastas, guardas, enjuagues, brackets" class="productos-showcase__img">
-            </div>
-            <div class="productos-showcase__info">
-                <span class="pill-tag">Higiene y Cuidado Bucal</span>
-                <h2 class="section-title" style="text-align: left; margin-bottom: 8px;">Productos Dentales Especializados</h2>
-                <p class="productos-showcase__lead">
-                    Complementa tu tratamiento y mantén una sonrisa saludable con la línea de productos recomendados por nuestros odontólogos.
-                </p>
-                <div class="productos-grid">
-                    <div class="producto-item">
-                        <div class="producto-item__icon">🪥</div>
-                        <div>
-                            <strong>Pastas y enjuagues</strong>
-                            <p>Fórmulas clínicas para encías sensibles, blanqueamiento y prevención integral de caries.</p>
-                        </div>
-                    </div>
-                    <div class="producto-item">
-                        <div class="producto-item__icon">✨</div>
-                        <div>
-                            <strong>Ortodoncia y brackets</strong>
-                            <p>Cepillos interdentales, ceras protectoras y aditamentos especiales para tu tratamiento.</p>
-                        </div>
-                    </div>
-                    <div class="producto-item">
-                        <div class="producto-item__icon">🛡️</div>
-                        <div>
-                            <strong>Guardas oclusales</strong>
-                            <p>Protección contra el bruxismo nocturno y resguardo dental deportivo a la medida.</p>
-                        </div>
-                    </div>
-                    <div class="producto-item">
-                        <div class="producto-item__icon">🧵</div>
-                        <div>
-                            <strong>Hilo dental y complementos</strong>
-                            <p>Limpieza profunda entre dientes para evitar acumulación de placa bacteriana.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="productos-showcase__footer">
-                    <p class="productos-showcase__note">
-                        ⭐ <em>Disponibles para venta directa en recepción de la clínica durante tu consulta. ¡Pregunta a tu doctor cuál es el más adecuado para ti!</em>
-                    </p>
-                    <div>
-                        <a href="{% url 'scheduling:reservar_categoria' %}" class="btn btn--primary">Agendar cita de valoración</a>
-                    </div>
-                </div>
-            </div>
+<section class="section section--alt" id="productos">
+    <div class="container" style="text-align:center;">
+        <h2 class="section-title reveal">Productos Dentales y Cuidado Bucal</h2>
+        <p class="section-subtitle reveal">Pastas, guardas, enjuagues, hilo dental y más para higiene y tratamiento de brackets.</p>
+        <div style="max-width:360px; margin:0 auto 24px;">
+            <img src="{% static 'images/banner-productos.png' %}" alt="Productos dentales" style="width:100%; height:auto; margin:0 auto; border-radius:var(--radius); box-shadow:var(--shadow);">
+        </div>
+        <p style="color:var(--color-gray); margin-bottom:20px;">
+            Disponibles para venta directa en recepción de la clínica durante tu consulta.
+        </p>
+        <div>
+            <a href="{% url 'scheduling:reservar_categoria' %}" class="btn btn--primary">Agendar cita</a>
         </div>
     </div>
 </section>
