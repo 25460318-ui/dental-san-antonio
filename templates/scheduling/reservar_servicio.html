@@ -1,11 +1,16 @@
 {% extends "base.html" %}
-{% load humanize %}
+{% load static humanize %}
 {% block title %}Agendar cita — Dental San Antonio{% endblock %}
 {% block content %}
 <section class="section">
     <div class="container" style="max-width:640px;">
         {% include "scheduling/_wizard_steps.html" %}
         <div class="wizard-card">
+            {% if "odontopediatr" in categoria.nombre|lower %}
+                <div style="text-align:center; margin-bottom: 20px;">
+                    <img src="{% static 'images/dr-coco-odontopediatria.png' %}" alt="Dr. Coco — Odontopediatría" style="max-height: 160px; width: auto; margin: 0 auto; filter: drop-shadow(0 6px 14px rgba(31, 41, 55, 0.12));">
+                </div>
+            {% endif %}
             <h2 class="section-title">{{ categoria.nombre }}</h2>
             <p class="section-subtitle">¿Cuál de estos servicios necesitas?</p>
             <form method="post">

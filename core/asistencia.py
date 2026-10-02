@@ -13,6 +13,8 @@ from .models import ClinicInfo
 PREGUNTAS_RAPIDAS = [
     ("agendar", "¿Cómo agendo una cita?"),
     ("servicios", "¿Qué servicios ofrecen?"),
+    ("odontopediatria", "¿Atienden a niños? (Dr. Coco)"),
+    ("productos", "¿Qué productos dentales venden?"),
     ("precio_limpieza", "¿Cuánto cuesta una limpieza?"),
     ("anticipo", "¿Qué anticipo necesito?"),
     ("ubicacion", "¿Dónde están ubicados?"),
@@ -24,6 +26,8 @@ PREGUNTAS_RAPIDAS = [
 _PALABRAS_CLAVE = {
     "agendar": ["agendar", "cita", "reservar", "apartar"],
     "servicios": ["servicio", "tratamiento", "que hacen", "que ofrecen"],
+    "odontopediatria": ["nino", "ninos", "nina", "ninas", "bebe", "bebes", "hijo", "hijos", "infantil", "odontopediatria", "coco", "dr coco", "pediatra"],
+    "productos": ["producto", "pasta", "guarda", "enjuague", "hilo dental", "cepillo", "cera", "bracket", "brackets", "ortodoncia"],
     "precio_limpieza": ["limpieza"],
     "anticipo": ["anticipo", "adelanto", "pago", "abono"],
     "ubicacion": ["ubicacion", "direccion", "donde estan", "como llego", "donde queda"],
@@ -68,6 +72,28 @@ def responder(intent):
         else:
             texto = "Muy pronto vamos a tener el catálogo de servicios disponible aquí."
         return {"texto": texto, "enlace_texto": "Ver servicios", "enlace_url": reverse("core:home") + "#servicios"}
+
+    if intent == "odontopediatria":
+        return {
+            "texto": (
+                "¡Sí! En Dental San Antonio contamos con atención especializada en Odontopediatría con "
+                "el Dr. Coco. Brindamos una experiencia divertida, sin dolor ni miedo, para que tus "
+                "pequeños aprendan a cuidar su sonrisa con total confianza y alegría."
+            ),
+            "enlace_texto": "Conocer Odontopediatría",
+            "enlace_url": reverse("core:home") + "#odontopediatria",
+        }
+
+    if intent == "productos":
+        return {
+            "texto": (
+                "En Dental San Antonio contamos con productos para tu higiene diaria y cuidado de brackets: "
+                "pastas especializadas, guardas oclusales, enjuagues, hilo dental, cepillos interdentales y "
+                "ceras ortodónticas. Puedes adquirirlos en recepción durante tu visita."
+            ),
+            "enlace_texto": "Ver productos",
+            "enlace_url": reverse("core:home") + "#productos",
+        }
 
     if intent == "precio_limpieza":
         servicio = (

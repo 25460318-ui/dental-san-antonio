@@ -1,11 +1,15 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Acceso del personal — Dental San Antonio{% endblock %}
 {% block content %}
 <section class="section">
     <div class="container" style="max-width:420px;">
         <div class="wizard-card">
-            <h2 class="section-title">Acceso del personal</h2>
-            <p class="section-subtitle">Inicia sesión para entrar al panel de agenda.</p>
+            <div style="text-align:center; margin-bottom: 20px;">
+                <img src="{% static 'images/logo-oficial.png' %}" alt="Dental San Antonio" style="height: 75px; width: auto; margin: 0 auto 12px; border-radius: 12px;">
+                <h2 class="section-title" style="margin-bottom:4px;">Acceso del personal</h2>
+                <p class="section-subtitle" style="margin-bottom:0;">Inicia sesión para entrar al panel de agenda.</p>
+            </div>
             {% if form.errors %}
                 <div class="alert alert--error">Usuario o contraseña incorrectos.</div>
             {% endif %}
